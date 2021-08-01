@@ -1,62 +1,61 @@
 package com.example.thesearcher.view_model
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.thesearcher.model.ImageInfo
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import com.example.thesearcher.data.Network.Model.ImagesResult
 import com.example.thesearcher.model.ImageRepository
-import com.example.thesearcher.model.OperationCallback
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
+import javax.inject.Provider
 
-class MainActivityViewModel(private val repository: ImageRepository): ViewModel() {
-    var images : MutableLiveData<MutableList<ImageInfo>> = MutableLiveData<MutableList<ImageInfo>>()
+class MainActivityViewModel @Inject constructor(
+    private val queryImageUseCaseProvider: Provider<QueryImagesUseCase>
+): ViewModel() {
 
-    fun getImagesOnRequest(searchRequest: String) {
-        repository.fetchImages(object: OperationCallback<ImageInfo> {
+    private val _query = MutableStateFlow("")
+    private val query: StateFlow<String> = _query.asStateFlow()
 
-            override fun onSuccess(data: MutableList<ImageInfo>?) {
-                images.postValue(data)
-            }
+    @ExperimentalCoroutinesApi
+    val images: StateFlow<PagingData<ImagesResult>> = query
+        .map(::newPager)
+        .flatMapLatest { pager -> pager.flow }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
-            override fun onError(error: String?) {
-                TODO("Not yet implemented")
-            }
-        },
-        searchRequest
-        )
-    }
-    //todo :: FIX ME
-    fun getNextPage() {
-        repository.fetchNextPage(object: OperationCallback<ImageInfo> {
+    private val newPagingSource: PagingSource<*, *>? = null
 
-            override fun onSuccess(data: MutableList<ImageInfo>?) {
-//                images.postValue(data)
-                var dt : MutableList<ImageInfo> = mutableListOf()
-                for(item in images.value!!) {
-                    dt.add(item)
-                }
-                if (data != null) {
-                    for(item in data){
-                        dt.add(item)
-                    }
-                }
-                images.postValue(data)
-            }
-
-            override fun onError(error: String?) {
-                TODO("Not yet implemented")
-            }
-        })
+    private fun newPager(query: String): Pager<Int, ImagesResult> {
+        return Pager(PagingConfig(pageSize = 100)) {
+            newPagingSource?.invalidate()
+            val queryImagesUseCase = queryImageUseCaseProvider.get()
+            queryImagesUseCase(query).also { newPagingSource}
+        }
     }
 
-    fun getPrevPage() {
-        repository.fetchPrevPage(object: OperationCallback<ImageInfo> {
+    fun setQuery(query: String){
+        _query.tryEmit(query)
+    }
 
-            override fun onSuccess(data: MutableList<ImageInfo>?) {
-                images.postValue(data)
-            }
+    @Suppress("UNCHECKED_CAST")
+    class Factory @Inject constructor(
+        private val viewModelProvider: Provider<MainActivityViewModel>
+    ) : ViewModelProvider.Factory {
 
-            override fun onError(error: String?) {
-                TODO("Not yet implemented")
-            }
-        })
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            require(modelClass == MainActivityViewModel::class.java)
+            return viewModelProvider.get() as T
+        }
+    }
+}
+
+class QueryImagesUseCase @Inject constructor(private val repository: ImageRepository) {
+
+    operator fun invoke(query: String) : PagingSource<Int, ImagesResult> {
+        return repository.makeRequest(query)
     }
 }

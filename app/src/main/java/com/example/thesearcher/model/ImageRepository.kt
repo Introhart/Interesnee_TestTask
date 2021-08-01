@@ -1,16 +1,16 @@
 package com.example.thesearcher.model
 
-class ImageRepository(private val imageDataSource: ImageDataSource) {
+import androidx.paging.PagingSource
+import com.example.thesearcher.data.ImagePageSource
+import com.example.thesearcher.data.Network.Model.ImagesResult
+import javax.inject.Inject
 
-    fun fetchImages(callback: OperationCallback<ImageInfo>, searchRequest: String) {
-        imageDataSource.retrieveImages(callback, searchRequest)
+class ImageRepository @Inject constructor(
+    private val imagePageSource: ImagePageSource.Factory
+) {
+
+    fun makeRequest(query: String): PagingSource<Int, ImagesResult> {
+        return imagePageSource.create(query)
     }
 
-    fun fetchNextPage(callback: OperationCallback<ImageInfo>) {
-        imageDataSource.retrieveNext(callback)
-    }
-
-    fun fetchPrevPage(callback: OperationCallback<ImageInfo>) {
-        imageDataSource.retrievePrev(callback)
-    }
 }

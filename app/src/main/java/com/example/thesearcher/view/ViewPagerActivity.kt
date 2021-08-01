@@ -1,29 +1,36 @@
 package com.example.thesearcher.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
+import androidx.lifecycle.addRepeatingJob
 import androidx.viewpager2.widget.ViewPager2
-import com.example.thesearcher.DI.Injection
 import com.example.thesearcher.R
-import com.example.thesearcher.model.ImageInfo
-import com.example.thesearcher.model.ViewModelKeeper
+import com.example.thesearcher.data.Network.Model.ImagesResult
 import com.example.thesearcher.view_model.MainActivityViewModel
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+import javax.inject.Provider
 
 class ViewPagerActivity : AppCompatActivity() {
 
-    private lateinit var pagerAdapter: ViewPagerAdapter
+    @Inject
+    lateinit var viewModelProvider: Provider<MainActivityViewModel.Factory>
+    private val viewModel: MainActivityViewModel by viewModels { viewModelProvider.get() }
+
+//    private lateinit var pagerAdapter: ViewPagerAdapter
     private lateinit var viewPager: ViewPager2
-    private lateinit var viewModel: MainActivityViewModel
+
+    private val adapter by lazy(LazyThreadSafetyMode.NONE) {
+        ViewPagerAdapter(this) // TODO :: WHY ???
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_view_pager)
         Log.d("dbg", intent.getIntExtra("ARG", 0).toString())
 
@@ -33,24 +40,22 @@ class ViewPagerActivity : AppCompatActivity() {
 
     private fun setupUI()
     {
-//        pagerAdapter = ViewPagerAdapter(this, mutableListOf()) // TODO :: HANDLE NULL EXCEPTION
-        pagerAdapter = ViewPagerAdapter( viewModel.images.value!!)// TODO :: HANDLE NULL EXCEPTION
-
+//        pagerAdapter = ViewPagerAdapter( viewModel.images)// TODO :: HANDLE NULL EXCEPTION
         viewPager = findViewById(R.id.viewPager)
-        viewPager.adapter = pagerAdapter
-        Log.d("dbg", "setupUI")
-        viewPager.currentItem = intent.getIntExtra("ARG", 0)
+
+        viewPager.adapter = adapter
+        addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.images.collectLatest(adapter::submitData)
+        }
+//        viewPager.currentItem = intent.getIntExtra("ARG", 0)
 
     }
 
     private fun setupViewModel()
     {
-        viewModel = ViewModelKeeper.viewModel
-        viewModel.images.observe(this, renderImages)
+        viewModelProvider.get()
+//        viewModel = ViewModelKeeper.viewModel
+//        viewModel.images.observe(this, renderImages)
     }
 
-    private val renderImages = Observer<MutableList<ImageInfo>>{
-//        pagerAdapter.update(it) // TODO :: REMEMBER
-    }
-    
 }
