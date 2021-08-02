@@ -20,7 +20,7 @@ class ImageApplication : Application() {
     }
 }
 
-val Context.appComponent: AppComponent // TODO :: А надо ли ???
+val Context.appComponent: AppComponent
     get() = when (this) {
         is ImageApplication -> appComponent
         else -> (applicationContext as ImageApplication).appComponent

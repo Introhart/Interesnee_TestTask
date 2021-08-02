@@ -30,7 +30,7 @@ class ImagePageSource @AssistedInject constructor(
 
         val page: Int = params.key ?: 1
         val response = service.getImages(
-            "Apple",
+            query,
             "isch",
             0,
             "google"

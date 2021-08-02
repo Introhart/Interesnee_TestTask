@@ -1,13 +1,9 @@
 package com.example.thesearcher.view
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -78,14 +74,13 @@ class ViewPagerAdapter(context: Context)
 //            Log.d("dbg", "Empty image")
 //        }
     }
-
 }
 
 class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     private val imageView = itemView.findViewById<ImageView>(R.id.viewPagerImageView)
 
     fun bind(imageResult: ImagesResult?) {
-        Glide.with(imageView.context).load(imageResult?.thumbnail).into(imageView)
+        Glide.with(imageView.context).load(imageResult?.original).into(imageView)
     }
 }
 
