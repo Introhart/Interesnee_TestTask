@@ -1,5 +1,6 @@
 package com.example.thesearcher
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -30,11 +31,9 @@ class MainActivity : AppCompatActivity() {
     private val adapter by lazy(LazyThreadSafetyMode.NONE) {
         RecyclerViewAdapter(this)
 }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-
         setContentView(R.layout.activity_main)
 
         setupViewModel()
@@ -60,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         addRepeatingJob(Lifecycle.State.STARTED) {
             viewModel.images.collectLatest(adapter::submitData)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -86,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
+
     }
 }
 

@@ -20,7 +20,8 @@ class MainActivityViewModel @Inject constructor(
 ): ViewModel() {
 
     init{
-        Log.d("dbg", "New ViewModel")
+        Log.d("dbg", "New ViewModel : ${this.hashCode()}")
+
     }
     private val _query = MutableStateFlow("")
 
@@ -48,17 +49,13 @@ class MainActivityViewModel @Inject constructor(
     }
 
 
-    @Singleton
     @Suppress("UNCHECKED_CAST")
     class Factory @Inject constructor(
         private val viewModelProvider: Provider<MainActivityViewModel>
     ) : ViewModelProvider.Factory {
-        var a = 0
+
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            Log.d("dbg", "Factory")
             require(modelClass == MainActivityViewModel::class.java)
-            Log.d("dbg", "FactoryEnd : $a")
-            a++
             return viewModelProvider.get() as T
         }
     }
