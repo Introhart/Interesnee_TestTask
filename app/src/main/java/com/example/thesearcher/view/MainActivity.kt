@@ -1,10 +1,10 @@
 package com.example.thesearcher
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -14,10 +14,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.thesearcher.view.RecyclerViewAdapter
 import com.example.thesearcher.view_model.MainActivityViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onCompletion
+import okhttp3.internal.notify
 import javax.inject.Inject
 import javax.inject.Provider
+
+// TODO :: Produce VM with fabric. (Костыль)
+object tempTestObject{
+    lateinit var viewModel: MainActivityViewModel
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private val adapter by lazy(LazyThreadSafetyMode.NONE) {
         RecyclerViewAdapter(this)
 }
+
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
@@ -42,9 +51,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewModel(){
         viewModelProvider.get()
-//        viewModel.setQuery("apple")
+        viewModel.setQuery("apple")
+        tempTestObject.viewModel = viewModel
     }
-    lateinit var job: Job
+
+    @ExperimentalCoroutinesApi
     private fun setupUI(){
         recyclerView = findViewById(R.id.recyclerView)
 
@@ -55,9 +66,9 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = adapter
 
-
         addRepeatingJob(Lifecycle.State.STARTED) {
             viewModel.images.collectLatest(adapter::submitData)
+            Log.d("dbg", "addRepeatingJob")
         }
     }
 
@@ -79,12 +90,9 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onRestart() {
-        super.onRestart()
-
-    }
 }
 
