@@ -21,7 +21,6 @@ class ImagePageSource @AssistedInject constructor(
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 
-    // TODO :: REFACTOR ME
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ImagesResult> {
 
         if (query.isEmpty()){
@@ -47,6 +46,7 @@ class ImagePageSource @AssistedInject constructor(
 //            TODO :: HTTP EXCEPTION
             Log.d("dbg", "Not yet implemented")
         }
+
         TODO("Not yet implemented")
     }
 

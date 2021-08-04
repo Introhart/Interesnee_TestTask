@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -16,12 +15,10 @@ import com.example.thesearcher.view.RecyclerViewAdapter
 import com.example.thesearcher.view_model.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onCompletion
-import okhttp3.internal.notify
 import javax.inject.Inject
 import javax.inject.Provider
 
-// TODO :: Produce VM with fabric. (Костыль)
+// TODO :: Produce VM with fabric. (Ныне -> Костыль)
 object tempTestObject{
     lateinit var viewModel: MainActivityViewModel
 }
@@ -88,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return true
             }
-
         })
 
         return super.onCreateOptionsMenu(menu)

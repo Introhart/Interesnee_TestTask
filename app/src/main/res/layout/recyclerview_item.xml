@@ -22,7 +22,4 @@
             android:contentDescription="TODO" />
     </RelativeLayout>
 
-
-
-
 </androidx.cardview.widget.CardView>

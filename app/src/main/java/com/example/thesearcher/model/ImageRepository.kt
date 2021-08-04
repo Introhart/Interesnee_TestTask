@@ -12,5 +12,4 @@ class ImageRepository @Inject constructor(
     fun makeRequest(query: String): PagingSource<Int, ImagesResult> {
         return imagePageSource.create(query)
     }
-
 }

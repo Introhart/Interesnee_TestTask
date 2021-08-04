@@ -3,6 +3,7 @@ package com.example.thesearcher.view
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.Browser
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.thesearcher.R
 import com.example.thesearcher.data.Network.Model.ImagesResult
+import com.example.thesearcher.view.BrowserView.BrowserActivity
 
 
 class ViewPagerAdapter(context: Context)
@@ -34,12 +36,16 @@ class ViewPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     private val imageView = itemView.findViewById<ImageView>(R.id.viewPagerImageView)
     private val btnOpenOriginalPage = itemView.findViewById<Button>(R.id.btnOpenOriginalPage)
 
+    // TODO :: Implement SVG handling
     fun bind(imageResult: ImagesResult?) {
         Glide.with(imageView.context).load(imageResult?.original).into(imageView)
 
         btnOpenOriginalPage.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(imageResult?.link))
-            itemView.context.startActivity(browserIntent)
+            val webIntent = Intent(itemView.context, BrowserActivity::class.java)
+            webIntent.putExtra("pageUrl", imageResult?.link)
+            itemView.context.startActivity(webIntent)
+//            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(imageResult?.link))
+//            itemView.context.startActivity(browserIntent)
         }
     }
 }

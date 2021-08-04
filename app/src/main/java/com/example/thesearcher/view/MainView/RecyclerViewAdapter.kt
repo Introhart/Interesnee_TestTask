@@ -2,7 +2,6 @@ package com.example.thesearcher.view
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.thesearcher.R
 import com.example.thesearcher.data.Network.Model.ImagesResult
+import com.example.thesearcher.view.PagerView.ViewPagerActivity
 
 class RecyclerViewAdapter(context: Context)
     : PagingDataAdapter<ImagesResult, ViewHolder>(ImageDiffCallback) {
