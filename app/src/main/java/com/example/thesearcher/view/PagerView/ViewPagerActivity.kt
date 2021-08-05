@@ -7,8 +7,9 @@ import androidx.lifecycle.addRepeatingJob
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.thesearcher.R
+import com.example.thesearcher.TempTestObject
 import com.example.thesearcher.appComponent
-import com.example.thesearcher.tempTestObject
+import com.example.thesearcher.view.INTENT_EXTRA_ITEM_NUM
 import com.example.thesearcher.view.ViewPagerAdapter
 import com.example.thesearcher.view_model.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +24,7 @@ class ViewPagerActivity : AppCompatActivity() {
 
 //    private val viewModel: MainActivityViewModel by viewModels { viewModelProvider.get() }
 
-    private val viewModel = tempTestObject.viewModel // Produce with fabric
+    private val viewModel = TempTestObject.viewModel // Produce with fabric
     
     private lateinit var viewPager: ViewPager2
 
@@ -38,8 +39,6 @@ class ViewPagerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_view_pager)
 
         setupUI();
-
-        viewPager.setCurrentItem(intent.getIntExtra("ARG", 0), false)
     }
 
     @ExperimentalCoroutinesApi
@@ -57,7 +56,7 @@ class ViewPagerActivity : AppCompatActivity() {
             object : RecyclerView.AdapterDataObserver() {
                 override fun onStateRestorationPolicyChanged() {
                     super.onStateRestorationPolicyChanged()
-                    viewPager.setCurrentItem(intent.getIntExtra("ARG", 0), false)
+                    viewPager.setCurrentItem(intent.getIntExtra(INTENT_EXTRA_ITEM_NUM, 0), false)
                 }
             }
         )

@@ -14,6 +14,8 @@ import com.example.thesearcher.R
 import com.example.thesearcher.data.Network.Model.ImagesResult
 import com.example.thesearcher.view.PagerView.ViewPagerActivity
 
+val INTENT_EXTRA_ITEM_NUM = "intentExtraItemNum"
+
 class RecyclerViewAdapter(context: Context)
     : PagingDataAdapter<ImagesResult, ViewHolder>(ImageDiffCallback) {
 
@@ -35,13 +37,19 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     init {
         itemView.setOnClickListener {
             val intent = Intent(itemView.context, ViewPagerActivity::class.java)
-            intent.putExtra("ARG", this.layoutPosition) // TODO :: Refactor
+            intent.putExtra(INTENT_EXTRA_ITEM_NUM, this.layoutPosition) // TODO :: Refactor
             itemView.context.startActivity(intent)
         }
     }
 
     fun bind(imageResult: ImagesResult?) {
-        Glide.with(imageView.context).load(imageResult?.thumbnail).into(imageView)
+        if (imageResult == null){
+            return
+        }
+
+        Glide.with(imageView.context)
+            .load(imageResult?.thumbnail)
+            .into(imageView)
     }
 }
 

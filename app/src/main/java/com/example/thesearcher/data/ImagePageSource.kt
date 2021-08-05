@@ -1,6 +1,5 @@
 package com.example.thesearcher.data
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.thesearcher.data.Network.ImageApi
@@ -8,12 +7,14 @@ import com.example.thesearcher.data.Network.Model.ImagesResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-
+import retrofit2.HttpException
 
 class ImagePageSource @AssistedInject constructor(
     private val service: ImageApi,
     @Assisted("query") private val query: String,
 ) : PagingSource<Int, ImagesResult>() {
+
+    private val PAGE_SIZE = 100
 
     override fun getRefreshKey(state: PagingState<Int, ImagesResult>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
@@ -27,27 +28,30 @@ class ImagePageSource @AssistedInject constructor(
             return LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
         }
 
-        val page: Int = params.key ?: 1
-        val response = service.getImages(
-            query,
-            "isch",
-            0,
-            "google"
-        ) // TODO :: USE RESOURCES
+        try{
+            val page: Int = params.key ?: 1
+            val response = service.getImages(
+                query,
+                "isch",
+                0,
+                "google"
+            )
 
-        if (response.isSuccessful) {
-            val result = response.body()?.images_results
+            return if (response.isSuccessful) {
+                val result = response.body()?.images_results
 
-            val nextKey = if (result?.size!! < 100) null else page + 1
-            val prevKey = if (page == 1) null else page - 1
+                val nextKey = if (result?.size!! < PAGE_SIZE) null else page + 1
+                val prevKey = if (page == 1) null else page - 1
 
-            return LoadResult.Page(result, prevKey, nextKey)
-        } else {
-//            TODO :: HTTP EXCEPTION
-            Log.d("dbg", "Not yet implemented")
+                LoadResult.Page(result, prevKey, nextKey)
+            } else {
+                LoadResult.Error(HttpException(response))
+            }
+        } catch(e: HttpException){
+            return LoadResult.Error(e)
+        } catch (e: Exception){
+            return LoadResult.Error(e)
         }
-
-        TODO("Not yet implemented")
     }
 
     @AssistedFactory

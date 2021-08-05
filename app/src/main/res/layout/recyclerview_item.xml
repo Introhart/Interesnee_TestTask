@@ -18,8 +18,7 @@
             android:id="@+id/itemImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="TODO" />
+            android:layout_centerInParent="true"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

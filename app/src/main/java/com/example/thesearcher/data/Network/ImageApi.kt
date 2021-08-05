@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-val API_KEY = "2a79c66278f7ee20959e979e87016451b2da276a79fbae3e1406fada5935b72a"
+val API_KEY = "95b9807bd29bb6e5755b8449a8e70378abb371ca9663a05234a253c9f0ce7376"
 
 interface ImageApi {
 
